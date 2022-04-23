@@ -190,21 +190,21 @@ onChangeIndex = function(Index, societyName, value)
 		if ESX.PlayerData.job.name == societyName then
 			ESX.TriggerServerCallback('esx_society:setJob', function()
 				ESX.ShowNotification("Vous avez rétrograder " .. value.name .. ".")
-			end, value.identifier, value.job.name, value.job.grade + 1, 'retro')
+			end, value.identifier, value.job.name, value.job.grade - 1, 'retro')
 		elseif ESX.PlayerData.orga.name == societyName then
 			ESX.TriggerServerCallback('esx_society:setOrga', function()
 				ESX.ShowNotification("Vous avez rétrograder " .. value.name .. ".")
-			end, value.identifier, value.job.name, value.job.grade + 1, 'retro')
+			end, value.identifier, value.job.name, value.job.grade - 1, 'retro')
 		end
 	elseif Index == 3 then
 		if ESX.PlayerData.job.name == societyName then
 			ESX.TriggerServerCallback('esx_society:setJob', function()
 				ESX.ShowNotification("Vous avez viré " .. value.name .. ".")
-			end, value.identifier, value.job.name, value.job.grade + 1, 'fire')
+			end, value.identifier, "nojob", 0, 'fire')
 		elseif ESX.PlayerData.orga.name == societyName then
 			ESX.TriggerServerCallback('esx_society:setOrga', function()
 				ESX.ShowNotification("Vous avez viré " .. value.name .. ".")
-			end, value.identifier, value.job.name, value.job.grade + 1, 'fire')
+			end, value.identifier, "noorga", 0, 'fire')
 		end
 	end
 end
