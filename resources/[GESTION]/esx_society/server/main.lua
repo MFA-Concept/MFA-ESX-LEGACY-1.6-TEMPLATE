@@ -88,6 +88,28 @@ AddEventHandler('esx_society:getSociety', function(name, cb)
 	cb(GetSociety(name))
 end)
 
+ESX.RegisterServerCallback('esx_society:withdraw', function(source, cb, societyName, amount)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local society = GetSociety(societyName)
+	amount = ESX.Math.Round(tonumber(amount))
+
+	if isPlayerInSociety(xPlayer.source, society.name) then
+		TriggerEvent('esx_addonaccount:getSharedAccount', society.account, function(account)
+			if amount > 0 and account.money >= amount then
+				account.removeMoney(amount)
+				xPlayer.addMoney(amount)
+				xPlayer.showNotification(_U('have_withdrawn', ESX.Math.GroupDigits(amount)))
+				cb(true)
+			else
+				xPlayer.showNotification(_U('invalid_amount'))
+				cb(false)
+			end
+		end)
+	else
+		print(('esx_society: %s attempted to call withdrawMoney!'):format(xPlayer.identifier))
+	end
+end)
+
 RegisterServerEvent('esx_society:withdrawMoney')
 AddEventHandler('esx_society:withdrawMoney', function(societyName, amount)
 	local xPlayer = ESX.GetPlayerFromId(source)
@@ -106,6 +128,28 @@ AddEventHandler('esx_society:withdrawMoney', function(societyName, amount)
 		end)
 	else
 		print(('esx_society: %s attempted to call withdrawMoney!'):format(xPlayer.identifier))
+	end
+end)
+
+ESX.RegisterServerCallback('esx_society:deposit', function(src, cb, societyName, amount)
+	local xPlayer = ESX.GetPlayerFromId(src)
+	local society = GetSociety(societyName)
+	amount = ESX.Math.Round(tonumber(amount))
+
+	if isPlayerInSociety(xPlayer.source, society.name) then
+		if amount > 0 and xPlayer.getMoney() >= amount then
+			TriggerEvent('esx_addonaccount:getSharedAccount', society.account, function(account)
+				xPlayer.removeMoney(amount)
+				xPlayer.showNotification(_U('have_deposited', ESX.Math.GroupDigits(amount)))
+				account.addMoney(amount)
+			end)
+			cb(true)
+		else
+			xPlayer.showNotification(_U('invalid_amount'))
+			cb(false)
+		end
+	else
+		print(('esx_society: %s attempted to call depositMoney!'):format(xPlayer.identifier))
 	end
 end)
 

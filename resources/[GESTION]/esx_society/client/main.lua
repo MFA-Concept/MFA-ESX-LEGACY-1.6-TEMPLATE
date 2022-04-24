@@ -1,6 +1,7 @@
 local employees = {}
 local onlinePlayers = {}
 local society = {}
+local money = 0
 
 RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
@@ -23,40 +24,50 @@ MFAClient.CreateSubMenu('employesManagement', 'Menu Principal','GESTION DES EMPL
 MFAClient.CreateSubMenu('employesSalary', 'Menu Principal','GESTION DES SALAIRES', 'INTERACTION')
 MFAClient.CreateSubMenu('employesRecruit', 'Menu Principal','RECRUTER', 'INTERACTION')
 
-menuPrincipal = function(societyName, money)
+menuPrincipal = function(societyName)
 	MFAClient.IsVisible('Menu Principal', true, true, function()
-		local money = money
 		RageUI.SeparatorMini()
 		RageUI.Separator("Argent de l'entreprise: "..money.."~g~$")
 		RageUI.SeparatorMini()
 		MFAClient.ButtonWithStyle('Déposer de l\'argent', 'Déposer de l\'argent dans votre entreprise', {}, true, function(_, _, s)
 			if s then
-				local amount = MFAClient.KeyboardInput('Combien voulez-vous déposer ?', '', '', 8)
-				if tonumber(amount) > 0 then
-					TriggerServerEvent('esx_society:depositMoney', societyName, tonumber(amount))
-				else
+				local amount = MFAClient.KeyboardInput('', 'Combien voulez-vous déposer ?', '', 8)
+				if tonumber(amount) == nil or tonumber(amount) <= 0 then
 					ESX.ShowNotification("~r~Montant invalide")
+					return
+				elseif tonumber(amount) > 0 then
+					ESX.TriggerServerCallback("esx_society:deposit", function(valid)
+						if valid then
+							money = money + tonumber(amount)
+						end
+					end, societyName, tonumber(amount))
 				end
 			end
 		end)
 		MFAClient.ButtonWithStyle('Retirer de l\'argent', 'Retirer de l\'argent de votre entreprise', {}, true, function(_, _, s)
 			if s then
-				local amount = MFAClient.KeyboardInput('Combien voulez-vous retirer ?', '', '', 8)
-				if tonumber(amount) > 0 then
-					TriggerServerEvent('esx_society:withdrawMoney', societyName, tonumber(amount))
-				else
+				local amount = MFAClient.KeyboardInput('', 'Combien voulez-vous retirer ?', '', 8)
+				if tonumber(amount) == nil or tonumber(amount) <= 0 then
 					ESX.ShowNotification("~r~Montant invalide")
+					return
+				elseif tonumber(amount) > 0 then
+					ESX.TriggerServerCallback("esx_society:withdraw", function(valid)
+						if valid then
+							money = money - tonumber(amount)
+						end
+					end, societyName, tonumber(amount))
 				end
 			end
 		end)
 		if Config.Blanchiment then
 			MFAClient.ButtonWithStyle('Blanchir de l\'argent', ('Blanchir de l\'argent (%s)'):format(Config.washPourcent), {}, true, function(_, _, s)
 				if s then
-					local amount = MFAClient.KeyboardInput('Combien voulez-vous retirer ?', '', '', 8)
-					if tonumber(amount) > 0 then
-						TriggerServerEvent('esx_society:withdrawMoney', societyName, tonumber(amount))
-					else
+					local amount = MFAClient.KeyboardInput('', 'Combien voulez-vous retirer ?', '', 8)
+					if tonumber(amount) == nil or tonumber(amount) <= 0 then
 						ESX.ShowNotification("~r~Montant invalide")
+						return
+					elseif tonumber(amount) > 0 then
+						TriggerServerEvent('esx_society:withdrawMoney', societyName, tonumber(amount))
 					end
 				end
 			end)
@@ -209,12 +220,12 @@ onChangeIndex = function(Index, societyName, value)
 	end
 end
 
-AddEventHandler('esx_society:openBossMenu', function(society, close, options)
-	local refreshedMoney = 0
-	ESX.TriggerServerCallback('esx_society:getSocietyMoney', function(money)
-		refreshedMoney = money
+AddEventHandler('esx_society:openBossMenu', function(society)
+	ESX.TriggerServerCallback('esx_society:getSocietyMoney', function(societyMoney)
+		money = societyMoney
 	end, society)
+
 	MFAClient.OpenMenu('Menu Principal', function()
-		menuPrincipal(society, refreshedMoney)
+		menuPrincipal(society)
 	end, 0)
 end)
