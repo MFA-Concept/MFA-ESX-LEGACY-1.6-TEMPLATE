@@ -260,7 +260,7 @@ AddEventHandler('esx:setOrga', function(orga)
 		local grade2Label = orga.grade_label ~= orga.label and orga.grade_label or ''
 		if grade2Label ~= '' then grade2Label = ' - '..grade2Label end
 		ESX.UI.HUD.UpdateElement('orga', {
-			orag_label = orga.label,
+			orga_label = orga.label,
 			grade2_label = grade2Label
 		})
 	end

@@ -32,7 +32,7 @@ menuPrincipal = function(societyName)
 		MFAClient.ButtonWithStyle('Déposer de l\'argent', 'Déposer de l\'argent dans votre entreprise', {}, true, function(_, _, s)
 			if s then
 				local amount = MFAClient.KeyboardInput('', 'Combien voulez-vous déposer ?', '', 8)
-				if tonumber(amount) == nil or tonumber(amount) <= 0 then
+				if not amount or amount == "" or tonumber(amount) <= 0 then
 					ESX.ShowNotification("~r~Montant invalide")
 					return
 				elseif tonumber(amount) > 0 then
@@ -47,7 +47,7 @@ menuPrincipal = function(societyName)
 		MFAClient.ButtonWithStyle('Retirer de l\'argent', 'Retirer de l\'argent de votre entreprise', {}, true, function(_, _, s)
 			if s then
 				local amount = MFAClient.KeyboardInput('', 'Combien voulez-vous retirer ?', '', 8)
-				if tonumber(amount) == nil or tonumber(amount) <= 0 then
+				if not amount or amount == "" or tonumber(amount) <= 0 then
 					ESX.ShowNotification("~r~Montant invalide")
 					return
 				elseif tonumber(amount) > 0 then
@@ -59,19 +59,6 @@ menuPrincipal = function(societyName)
 				end
 			end
 		end)
-		if Config.Blanchiment then
-			MFAClient.ButtonWithStyle('Blanchir de l\'argent', ('Blanchir de l\'argent (%s)'):format(Config.washPourcent), {}, true, function(_, _, s)
-				if s then
-					local amount = MFAClient.KeyboardInput('', 'Combien voulez-vous retirer ?', '', 8)
-					if tonumber(amount) == nil or tonumber(amount) <= 0 then
-						ESX.ShowNotification("~r~Montant invalide")
-						return
-					elseif tonumber(amount) > 0 then
-						TriggerServerEvent('esx_society:withdrawMoney', societyName, tonumber(amount))
-					end
-				end
-			end)
-		end
 		MFAClient.ButtonWithStyle('Gestion des employés', 'Voir la liste des employés', {}, true, function(_, _, s)
 			if s then
 				employees = {}
