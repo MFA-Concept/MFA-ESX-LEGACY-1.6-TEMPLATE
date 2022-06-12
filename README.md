@@ -9,8 +9,6 @@ La base contient le double job /setjob /setorga avec les tables SQL:
 
 Le ESX SOCIETY est modifié pour le double job en RageUI Custom V1 (Je vous l'offre maintenant. Ne me demander pas d'aide pour l'utiliser.)
 
-Le seul "bug" qu'il y a ce trouve dans l'HUD quand les grades n'ont pas de label. (La base est gratuite et propre donc ne nous déranger pas pour ça)
-
 Enjoy, JustGod.
 
 Vidéo YouTube: https://www.youtube.com/watch?v=8IQqFXuQTf4&t=70s
